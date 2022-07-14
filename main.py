@@ -1,58 +1,83 @@
-from pywinauto.application import Application
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-import pandas as pd
-import psutil
-import os
-import time
-from bs4 import BeautifulSoup
-from unittest import TestCase
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
+if __name__ == '__main__':
+    import time
+    import pyautogui
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.common.action_chains import ActionChains
+    from selenium.common.exceptions import NoSuchElementException
+    from selenium.webdriver.support.ui import WebDriverWait 
+    from selenium.webdriver.common.keys import Keys
+    from selenium.webdriver.support import expected_conditions as EC
+    import undetected_chromedriver.v2 as uc
+    import random,time,os,sys
 
+    #options = webdriver.ChromeOptions()
+    #driver = webdriver.Chrome(options=options, executable_path=r"C:\webdr\chromedriver.exe")
 
-option = Options()
-option.add_argument("--disable-infobars") 
-browser = webdriver.Chrome('C:\webdr\chromedriver.exe', chrome_options=option)
-browser.get('https://rollmyfile.com')
+    chrome_options = uc.ChromeOptions()
+    chrome_options.add_argument("--disable-extensions")
+    chrome_options.add_argument("--disable-popup-blocking")
+    chrome_options.add_argument("--profile-directory=Default")
+    chrome_options.add_argument("--ignore-certificate-errors")
+    chrome_options.add_argument("--disable-plugins-discovery")
+    #chrome_options.add_argument("--incognito")
+    chrome_options.add_argument("user_agent=DN")
+    driver = uc.Chrome(options=chrome_options)
 
-inpFile =  browser.find_element(by = By.CLASS_NAME, value = 'choose-btn dz-clickable')
-inpFile.click()
+    #driver.delete_all_cookies()
 
+    driver.get("https://drive.google.com/drive/u/0/my-drive")
+    
+    email = driver.find_element("id", 'identifierId')
+    email.send_keys('arykanarslan@gmail.com')
+            
+    nextBtn = driver.find_element("id", 'identifierNext')
+    nextBtn.click()
+        
+    time.sleep(2)
+    passwd = driver.find_element("name", 'password')
+    passwd.send_keys('P@ssword!1234')
+    nextBtn = driver.find_element("id", 'passwordNext')
+    nextBtn.click()
+            
+    print("Login completed!")
 
-class ForUpload(TestCase):
-    def upload_file(self, filename):
-            path = os.path.join(
-                os.path.realpath('.'),
-                'fixtures',
-                filename
-            )
-            assert os.path.exists(path)
+    time.sleep(2)
 
-            for i in range(10):
-                app = Application()
-                app.connect(process=self.get_pid())  # connect to browser
-                dialog = app.top_window_()           # get active top window (Open dialog)
-                if not dialog.Edit.Exists():         # check if Edit field is exists
-                    time.sleep(1)                    # if no do again in 1 second (waiting for dialog after click)
-                    continue
-                dialog.Edit.TypeKeys('"{}"'.format(path))   # put file path
-                dialog['&OpenButton'].Click()               # click Open button
+    driver.find_element(By.XPATH, "/html/body/div[3]/div/div[3]/div/button[1]").click()
+    addNewFile = driver.find_element(By.XPATH, "//div[3]/div/span[2]/span/div")
+    addNewFile.click()
+    time.sleep(2)
 
-                return
+    filename = 'file.docx'
 
-            raise Exception('"Open File" dialog not found')
+    pyautogui.write("C:\\Users\\Admin\\git\\py\\make-cribs\\" + filename)
+    pyautogui.press('enter')
+    time.sleep(2)
+    pyautogui.press('enter')
+    driver.find_element(By.XPATH, "/html/body/div[16]/div[1]/div/div/div/div/div[3]/div[2]/button/span").click()
 
+    for i in range(20):
+        try:
+            addNewFile = driver.find_element(By.XPATH, "/html/body/div[3]/div/div[5]/div[2]/div[1]/div/c-wiz/div[2]/c-wiz/div[1]/c-wiz/div/c-wiz/div[1]/c-wiz/c-wiz/div/c-wiz/div/div/div")
+            addNewFile.click()
+            pyautogui.press('enter')
+            break
+        except:
+            time.sleep(1)
 
-    def upload(self):
-        el_logo_upload = self.wait.until(
-        EC.presence_of_element_located(
-                (By.NAME, 'upload-logo')
-            )
-        )
+    """while True:
+        try:
+            driver.find_element(By.XPATH, '/html/body/div[2]/div[4]/div[2]/div[1]/div[2]/div[17]/div/div/div/input')
+            break
+        except NoSuchElementException:
+            print("NO!")
+            continue"""
+    
+    time.sleep(5)
+    ActionChains(driver).send_keys(Keys.CONTROL, Keys.TAB)
+    time.sleep(5)
+    ActionChains(driver).send_keys(Keys.CONTROL, 'a')
 
-        el_logo_upload.click()
-        self.upload_file('file.docx')
+    driver.find_element(By.XPATH, '/html/body/div[2]/div[4]/div[2]/div[1]/div[2]/div[17]/div/div/div/input').sendKeys(4)
 
+    time.sleep(20)

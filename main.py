@@ -46,7 +46,7 @@ if __name__ == '__main__':
     driver.find_element(By.XPATH, "/html/body/div[3]/div/div[3]/div/button[1]").click()
     addNewFile = driver.find_element(By.XPATH, "//div[3]/div/span[2]/span/div")
     addNewFile.click()
-    time.sleep(2)
+    time.sleep(4)
 
     filename = 'file.docx'
 
@@ -65,19 +65,43 @@ if __name__ == '__main__':
         except:
             time.sleep(1)
 
-    """while True:
-        try:
-            driver.find_element(By.XPATH, '/html/body/div[2]/div[4]/div[2]/div[1]/div[2]/div[17]/div/div/div/input')
-            break
-        except NoSuchElementException:
-            print("NO!")
-            continue"""
     
     time.sleep(5)
-    ActionChains(driver).send_keys(Keys.CONTROL, Keys.TAB)
+    driver.switch_to.window(driver.window_handles[1])
     time.sleep(5)
-    ActionChains(driver).send_keys(Keys.CONTROL, 'a')
+    body = driver.find_element(By.TAG_NAME, "body")
+    body.send_keys(Keys.CONTROL + 'a')
+    body.send_keys(Keys.CONTROL + Keys.SPACE)
 
-    driver.find_element(By.XPATH, '/html/body/div[2]/div[4]/div[2]/div[1]/div[2]/div[17]/div/div/div/input').sendKeys(4)
+
+    driver.find_element(By.XPATH, '/html/body/div[2]/div[4]/div[2]/div[1]/div[2]/div[17]/div/div/div/input').send_keys(Keys.CONTROL + 'a')
+    driver.find_element(By.XPATH, '/html/body/div[2]/div[4]/div[2]/div[1]/div[2]/div[17]/div/div/div/input').send_keys(4)
+    driver.find_element(By.XPATH, '/html/body/div[2]/div[4]/div[2]/div[1]/div[2]/div[17]/div/div/div/input').send_keys(Keys.ENTER)
+
+    body.send_keys(Keys.CONTROL + 'h')
+    time.sleep(4)
+    driver.find_element(By.ID, 'docs-findandreplacedialog-input').send_keys(Keys.CONTROL + 'a')
+    driver.find_element(By.ID, 'docs-findandreplacedialog-input').send_keys(Keys.SPACE)
+    driver.find_element(By.ID, 'docs-findandreplacedialog-button-replace-all').click()
+
+    driver.find_element(By.ID, 'docs-findandreplacedialog-use-regular-expressions').click()
+    driver.find_element(By.ID, 'docs-findandreplacedialog-input').send_keys(Keys.CONTROL + 'a')
+    driver.find_element(By.ID, 'docs-findandreplacedialog-input').send_keys("\\", 'n')
+    driver.find_element(By.ID, 'docs-findandreplacedialog-button-replace-all').click()
+    driver.find_element(By.ID, 'docs-findandreplacedialog-input').send_keys(Keys.ESCAPE)
+
+    #here must be deliting photos!!
+
+    driver.find_element(By.ID, 'docs-file-menu').click()    
+    wait = WebDriverWait(driver, 10)
+    element = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id=":6u"]')))
+    element.click()
+
+    driver.find_element(By.ID, 'kix-pagesetupdialog-margin-left').send_keys(Keys.CONTROL + 'a')
+    driver.find_element(By.ID, 'kix-pagesetupdialog-margin-left').send_keys("0.55")
+
+    driver.find_element(By.ID, 'kix-pagesetupdialog-margin-right').send_keys(Keys.CONTROL + 'a')
+    driver.find_element(By.ID, 'kix-pagesetupdialog-margin-right').send_keys("5.70")
+    driver.find_element(By.NAME, 'ok').click()
 
     time.sleep(20)

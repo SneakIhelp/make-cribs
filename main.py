@@ -10,8 +10,6 @@ if __name__ == '__main__':
     import undetected_chromedriver.v2 as uc
     import random,time,os,sys
 
-    #options = webdriver.ChromeOptions()
-    #driver = webdriver.Chrome(options=options, executable_path=r"C:\webdr\chromedriver.exe")
 
     chrome_options = uc.ChromeOptions()
     chrome_options.add_argument("--disable-extensions")
@@ -19,11 +17,11 @@ if __name__ == '__main__':
     chrome_options.add_argument("--profile-directory=Default")
     chrome_options.add_argument("--ignore-certificate-errors")
     chrome_options.add_argument("--disable-plugins-discovery")
-    #chrome_options.add_argument("--incognito")
+    chrome_options.add_argument("--incognito")
     chrome_options.add_argument("user_agent=DN")
     driver = uc.Chrome(options=chrome_options)
 
-    #driver.delete_all_cookies()
+    driver.delete_all_cookies()
 
     driver.get("https://drive.google.com/drive/u/0/my-drive")
     
@@ -43,17 +41,23 @@ if __name__ == '__main__':
 
     time.sleep(2)
 
-    driver.find_element(By.XPATH, "/html/body/div[3]/div/div[3]/div/button[1]").click()
-    addNewFile = driver.find_element(By.XPATH, "//div[3]/div/span[2]/span/div")
+    driver.find_element(By.XPATH, "/html/body/div[3]/div/div[3]/div/button[1]").click()  
+    wait = WebDriverWait(driver, 10)
+    addNewFile = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[3]/div/span[2]/span/div')))
     addNewFile.click()
     time.sleep(4)
 
     filename = 'file.docx'
 
-    pyautogui.write("C:\\Users\\Admin\\git\\py\\make-cribs\\" + filename)
-    pyautogui.press('enter')
+    #для мак ос
     time.sleep(2)
+    pyautogui.write(os.getcwd() + '/' + filename)
+    print(os.getcwd() + '/' + filename)
     pyautogui.press('enter')
+
+    
+ 
+    time.sleep(10)
     driver.find_element(By.XPATH, "/html/body/div[16]/div[1]/div/div/div/div/div[3]/div[2]/button/span").click()
 
     for i in range(20):

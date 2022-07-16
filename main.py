@@ -1,16 +1,52 @@
+from __future__ import print_function
+
+import google.auth
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from googleapiclient.http import MediaFileUpload
+
+import time
+import pyautogui
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+import undetected_chromedriver.v2 as uc
+import time
+import os
+
+def upload_basic():
+    """Insert new file.
+    Returns : Id's of the file uploaded
+
+    Load pre-authorized user credentials from the environment.
+    TODO(developer) - See https://developers.google.com/identity
+    for guides on implementing OAuth2 for the application.
+    """
+    creds, _ = google.auth.default()
+
+    try:
+        # create gmail api client
+        service = build('drive', 'v3', credentials=creds)
+
+        file_metadata = {'name': 'file.docx'}
+        media = MediaFileUpload('file.docx',
+                                mimetype='image/jpeg')
+        # pylint: disable=maybe-no-member
+        file = service.files().create(body=file_metadata, media_body=media,
+                                      fields='id').execute()
+        print(F'File ID: {file.get("id")}')
+
+    except HttpError as error:
+        print(F'An error occurred: {error}')
+        file = None
+
+    return file.get('id')
+
+
 if __name__ == '__main__':
-    import time
-    import pyautogui
-    from selenium.webdriver.common.by import By
-    from selenium.webdriver.common.action_chains import ActionChains
-    from selenium.common.exceptions import NoSuchElementException
-    from selenium.webdriver.support.ui import WebDriverWait 
-    from selenium.webdriver.common.keys import Keys
-    from selenium.webdriver.support import expected_conditions as EC
-    import undetected_chromedriver.v2 as uc
-    import random,time,os,sys
-
-
     chrome_options = uc.ChromeOptions()
     chrome_options.add_argument("--disable-extensions")
     chrome_options.add_argument("--disable-popup-blocking")

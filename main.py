@@ -12,6 +12,8 @@ import os
 from google.oauth2 import service_account
 from googleapiclient.http import MediaIoBaseDownload,MediaFileUpload
 from googleapiclient.discovery import build
+import pprint
+import io
 
 if __name__ == '__main__':
     SCOPES = ['https://www.googleapis.com/auth/drive']
@@ -35,6 +37,14 @@ if __name__ == '__main__':
     
 
     chrome_options = uc.ChromeOptions()
+    chrome_options.headless = True
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--window-position=5000,5000')
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--remote-debugging-port=9222')
+    chrome_options.add_argument('--enable-javascript')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--allow-insecure-localhost')
     chrome_options.add_argument("--disable-extensions")
     chrome_options.add_argument("--disable-popup-blocking")
     chrome_options.add_argument("--profile-directory=Default")
@@ -43,7 +53,7 @@ if __name__ == '__main__':
     chrome_options.add_argument("--incognito")
     chrome_options.add_argument("user_agent=DN")
     driver = uc.Chrome(options=chrome_options)
-
+    driver.execute_script("window.open('url_of_page_to_get', 'new_window')")
     driver.delete_all_cookies()
 
     driver.get("https://drive.google.com/drive/folders/1GWArUb9GIuI8OdS6dd9CFl8PODe3zjv8")
@@ -55,7 +65,8 @@ if __name__ == '__main__':
     nextBtn.click()
         
     time.sleep(2)
-    passwd = driver.find_element("name", 'password')
+    
+    passwd = driver.find_element(By.XPATH, '/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[1]/div[1]/div/div/div/div/div[1]/div/div[1]/input')
     passwd.send_keys('P@ssword!1234')
     nextBtn = driver.find_element("id", 'passwordNext')
     nextBtn.click()
@@ -76,7 +87,7 @@ if __name__ == '__main__':
     body.send_keys(Keys.COMMAND + 'a') #control // COMMAND
     body.send_keys(Keys.COMMAND + Keys.SPACE)
 
-
+    time.sleep(2)
     driver.find_element(By.XPATH, '/html/body/div[2]/div[4]/div[2]/div[1]/div[2]/div[17]/div/div/div/input').send_keys(Keys.COMMAND + 'a')
     driver.find_element(By.XPATH, '/html/body/div[2]/div[4]/div[2]/div[1]/div[2]/div[17]/div/div/div/input').send_keys(4)
     driver.find_element(By.XPATH, '/html/body/div[2]/div[4]/div[2]/div[1]/div[2]/div[17]/div/div/div/input').send_keys(Keys.ENTER)
@@ -111,4 +122,17 @@ if __name__ == '__main__':
     driver.find_element(By.ID, 'kix-pagesetupdialog-margin-right').send_keys("5.70")
     driver.find_element(By.NAME, 'ok').click()
 
-    time.sleep(20)
+    time.sleep(5)
+
+    file_id = r['id']
+    request = service.files().get_media(fileId=file_id)
+    filename = os.getcwd() + '/result/file.docx'
+    fh = io.FileIO(filename, 'wb')
+    downloader = MediaIoBaseDownload(fh, request)
+    done = False
+    while done is False:
+            status, done = downloader.next_chunk()
+            print ("Download %d%%." % int(status.progress() * 100))
+
+    service.files().delete(fileId=file_id).execute()
+    print("File deleted!")

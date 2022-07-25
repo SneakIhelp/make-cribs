@@ -1,39 +1,38 @@
-from __future__ import print_function
-
-import google.auth
+from google.oauth2 import service_account
+from googleapiclient.http import MediaIoBaseDownload,MediaFileUpload
 from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-from googleapiclient.http import MediaFileUpload
+import pprint
+import io
+import os
 
+pp = pprint.PrettyPrinter(indent=4)
 
-def upload_basic():
-    """Insert new file.
-    Returns : Id's of the file uploaded
+SCOPES = ['https://www.googleapis.com/auth/drive']
+SERVICE_ACCOUNT_FILE = '/Users/user/Documents/make-cribs/makecribs-db3a28935e7b.json'
+credentials = service_account.Credentials.from_service_account_file(
+        SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+service = build('drive', 'v3', credentials=credentials)
 
-    Load pre-authorized user credentials from the environment.
-    TODO(developer) - See https://developers.google.com/identity
-    for guides on implementing OAuth2 for the application.
-    """
-    creds, _ = google.auth.default()
+folder_id = '1GWArUb9GIuI8OdS6dd9CFl8PODe3zjv8'
+name = 'file.docx'
+file_path = '/Users/user/Documents/make-cribs/file.docx'
+file_metadata = {
+                'name': name,
+                'parents': [folder_id]
+            }
+media = MediaFileUpload(file_path, resumable=True)
+r = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+pp.pprint(r)
 
-    try:
-        # create gmail api client
-        service = build('drive', 'v3', credentials=creds)
+results = service.files().list(pageSize=10,
+                               fields="nextPageToken, files(id, name, mimeType)").execute()
 
-        file_metadata = {'name': 'file.docx'}
-        media = MediaFileUpload('file.docx',
-                                mimetype='image/jpeg')
-        # pylint: disable=maybe-no-member
-        file = service.files().create(body=file_metadata, media_body=media,
-                                      fields='id').execute()
-        print(F'File ID: {file.get("id")}')
-
-    except HttpError as error:
-        print(F'An error occurred: {error}')
-        file = None
-
-    return file.get('id')
-
-
-if __name__ == '__main__':
-    upload_basic()
+file_id = r['id']
+request = service.files().get_media(fileId=file_id)
+filename = os.getcwd() + '/result/file.docx'
+fh = io.FileIO(filename, 'wb')
+downloader = MediaIoBaseDownload(fh, request)
+done = False
+while done is False:
+        status, done = downloader.next_chunk()
+        print ("Download %d%%." % int(status.progress() * 100))

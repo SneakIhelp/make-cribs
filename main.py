@@ -32,7 +32,7 @@ if __name__ == '__main__':
     files = os.listdir(fold)
     json = [i for i in files if i.endswith('.json')]
 
-    SERVICE_ACCOUNT_FILE = os.path.abspath(json[0])
+    SERVICE_ACCOUNT_FILE = str(os.path.abspath(json[0]))
     credentials = service_account.Credentials.from_service_account_file(
             SERVICE_ACCOUNT_FILE, scopes=SCOPES)
     service = build('drive', 'v3', credentials=credentials)
@@ -42,6 +42,7 @@ if __name__ == '__main__':
 
     name = docx[0]
     file_path = os.path.abspath(name)
+    nondocx_name = os.path.splitext(name)[0]
     file_metadata = {
                     'name': name,
                     'parents': [folder_id]
@@ -96,8 +97,9 @@ if __name__ == '__main__':
     body.send_keys(Keys.COMMAND + 'a') #control // COMMAND
     body.send_keys(Keys.COMMAND + Keys.SPACE)
 
-    time.sleep(2)
+    time.sleep(3)
     driver.find_element(By.XPATH, '/html/body/div[2]/div[4]/div[2]/div[1]/div[2]/div[17]/div/div/div/input').send_keys(Keys.COMMAND + 'a')
+    time.sleep(1)
     driver.find_element(By.XPATH, '/html/body/div[2]/div[4]/div[2]/div[1]/div[2]/div[17]/div/div/div/input').send_keys(4)
     driver.find_element(By.XPATH, '/html/body/div[2]/div[4]/div[2]/div[1]/div[2]/div[17]/div/div/div/input').send_keys(Keys.ENTER)
 
@@ -131,17 +133,18 @@ if __name__ == '__main__':
     driver.find_element(By.ID, 'kix-pagesetupdialog-margin-right').send_keys("5.70")
     driver.find_element(By.NAME, 'ok').click()
 
-    time.sleep(5)
+    time.sleep(10)
 
     file_id = r['id']
     request = service.files().get_media(fileId=file_id)
-    filename = os.getcwd() + '/result/file.docx'
+    filename = os.getcwd() + '/result/print_shpora.docx'
     fh = io.FileIO(filename, 'wb')
     downloader = MediaIoBaseDownload(fh, request)
     done = False
     while done is False:
             status, done = downloader.next_chunk()
             print ("Download %d%%." % int(status.progress() * 100))
+    time.sleep(1)
 
     service.files().delete(fileId=file_id).execute()
     print("File deleted!")

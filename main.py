@@ -63,40 +63,16 @@ if __name__ == '__main__':
     chrome_options.add_argument("--incognito")
     chrome_options.add_argument("user_agent=DN")
 
-    #chrome_options.headless = True
-    #chrome_options.add_argument('--headless')
 
     driver = uc.Chrome(options=chrome_options)
     driver.delete_all_cookies()
 
-    """driver.get("https://drive.google.com/drive/folders/1GWArUb9GIuI8OdS6dd9CFl8PODe3zjv8")
-
-    email = driver.find_element("id", 'identifierId')
-    email.send_keys('arykanarslan@gmail.com')
-            
-    nextBtn = driver.find_element("id", 'identifierNext')
-    nextBtn.click()
-        
-    time.sleep(2)
-    #driver.save_screenshot("screenshot.png")
-    
-    passwd = driver.find_element(By.XPATH, '/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[1]/div[1]/div/div/div/div/div[1]/div/div[1]/input')
-    passwd.send_keys('Parol!20077002')
-    nextBtn = driver.find_element("id", 'passwordNext')
-    nextBtn.click()
-            
-    print("Login completed!")
-    time.sleep(3)"""
-
     driver.get("https://docs.google.com/document/d/" + r['id'] + "/edit")
 
-    #wait = WebDriverWait(driver, 10)
-    #folder = wait.until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/div[5]/div[2]/div[2]/div/c-wiz/div[2]/c-wiz/div[1]/c-wiz/div/c-wiz/div[1]/c-wiz/c-wiz/div/c-wiz/div/div")))
-    #folder.click()
-    
+
     time.sleep(9)
     body = driver.find_element(By.TAG_NAME, "body")
-    body.send_keys(Keys.COMMAND + 'a') #control // COMMAND
+    body.send_keys(Keys.COMMAND + 'a') #CONTROL // COMMAND
     body.send_keys(Keys.COMMAND + Keys.SPACE)
 
     time.sleep(3)
@@ -118,7 +94,6 @@ if __name__ == '__main__':
     driver.find_element(By.ID, 'docs-findandreplacedialog-button-replace-all').click()
     driver.find_element(By.ID, 'docs-findandreplacedialog-input').send_keys(Keys.ESCAPE)
 
-    #here must be deliting photos!!
 
     time.sleep(2)
 
@@ -141,21 +116,6 @@ if __name__ == '__main__':
     driver.close()
 
     time.sleep(10)
-
-    """file_id = r['id']
-    request = service.files().get_media(fileId=file_id)
-    filename = os.getcwd() + '/result/print_shpora.docx'
-    fh = io.FileIO(filename, 'wb')
-    downloader = MediaIoBaseDownload(fh, request)
-    done = False
-    while done is False:
-            status, done = downloader.next_chunk()
-            print ("Download %d%%." % int(status.progress() * 100))
-    time.sleep(1)
-    
-    gdd.download_file_from_google_drive(file_id=r['id'],
-                                    dest_path='./result/mnist.zip',
-                                    unzip=True)"""
                                     
     fileid = r['id']
     url = f'https://docs.google.com/document/d/{fileid}/export?format=docx&id={fileid}'

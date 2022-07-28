@@ -12,7 +12,9 @@ import os
 from google.oauth2 import service_account
 from googleapiclient.http import MediaIoBaseDownload,MediaFileUpload
 from googleapiclient.discovery import build
+from google_drive_downloader import GoogleDriveDownloader as gdd
 import io
+import urllib.request
 
 if __name__ == '__main__':
     print("Перед тем как начать: \n" +
@@ -67,7 +69,7 @@ if __name__ == '__main__':
     driver = uc.Chrome(options=chrome_options)
     driver.delete_all_cookies()
 
-    driver.get("https://drive.google.com/drive/folders/1GWArUb9GIuI8OdS6dd9CFl8PODe3zjv8")
+    """driver.get("https://drive.google.com/drive/folders/1GWArUb9GIuI8OdS6dd9CFl8PODe3zjv8")
 
     email = driver.find_element("id", 'identifierId')
     email.send_keys('arykanarslan@gmail.com')
@@ -79,12 +81,12 @@ if __name__ == '__main__':
     #driver.save_screenshot("screenshot.png")
     
     passwd = driver.find_element(By.XPATH, '/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[1]/div[1]/div/div/div/div/div[1]/div/div[1]/input')
-    passwd.send_keys('P@ssword!1234')
+    passwd.send_keys('Parol!20077002')
     nextBtn = driver.find_element("id", 'passwordNext')
     nextBtn.click()
             
     print("Login completed!")
-    time.sleep(3)
+    time.sleep(3)"""
 
     driver.get("https://docs.google.com/document/d/" + r['id'] + "/edit")
 
@@ -133,9 +135,14 @@ if __name__ == '__main__':
     driver.find_element(By.ID, 'kix-pagesetupdialog-margin-right').send_keys("5.70")
     driver.find_element(By.NAME, 'ok').click()
 
+    time.sleep(5)
+    print("Форматирование произведено успешно!")
+
+    driver.close()
+
     time.sleep(10)
 
-    file_id = r['id']
+    """file_id = r['id']
     request = service.files().get_media(fileId=file_id)
     filename = os.getcwd() + '/result/print_shpora.docx'
     fh = io.FileIO(filename, 'wb')
@@ -145,6 +152,13 @@ if __name__ == '__main__':
             status, done = downloader.next_chunk()
             print ("Download %d%%." % int(status.progress() * 100))
     time.sleep(1)
+    
+    gdd.download_file_from_google_drive(file_id=r['id'],
+                                    dest_path='./result/mnist.zip',
+                                    unzip=True)"""
+                                    
+    fileid = r['id']
+    url = f'https://docs.google.com/document/d/{fileid}/export?format=docx&id={fileid}'
+    urllib.request.urlretrieve(url, './result/file.docx')
 
-    service.files().delete(fileId=file_id).execute()
     print("File deleted!")

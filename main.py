@@ -104,10 +104,12 @@ if __name__ == '__main__':
     ActionChains(driver).move_to_element(element).click(element).perform()
 
     driver.find_element(By.ID, 'kix-pagesetupdialog-margin-left').send_keys(Keys.COMMAND + 'a')
-    driver.find_element(By.ID, 'kix-pagesetupdialog-margin-left').send_keys("0.55")
+    driver.find_element(By.ID, 'kix-pagesetupdialog-margin-left').send_keys("0.65")
+
+    time.sleep(2)
 
     driver.find_element(By.ID, 'kix-pagesetupdialog-margin-right').send_keys(Keys.COMMAND + 'a')
-    driver.find_element(By.ID, 'kix-pagesetupdialog-margin-right').send_keys("5.70")
+    driver.find_element(By.ID, 'kix-pagesetupdialog-margin-right').send_keys("15")
     driver.find_element(By.NAME, 'ok').click()
 
     time.sleep(5)
